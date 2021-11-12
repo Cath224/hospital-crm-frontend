@@ -15,5 +15,8 @@ export default {
   data: () => ({
     //
   }),
+  created() {
+    this.$store.dispatch('db/refreshDbs');
+  }
 };
 </script>
