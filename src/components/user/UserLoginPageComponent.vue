@@ -32,12 +32,6 @@ export default {
         username: this.username,
         password: this.password,
       })
-      let page = this.$route.query?.page;
-      if (!page) {
-        page = 'Home';
-      }
-      this.$router.push({name: page});
-
     },
     signIn() {
       this.signUp();

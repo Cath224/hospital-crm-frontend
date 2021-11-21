@@ -28,6 +28,10 @@ const actions = {
   loadUserFromStorage({ commit }) {
     commit("setUser", LocalStorage.getItem("user"));
   },
+  logout({ commit }) {
+    LocalStorage.deleteItem("user");
+    commit("setUser", null);
+  },
 };
 
 const mutations = {

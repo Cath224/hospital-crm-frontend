@@ -7,6 +7,9 @@
       </v-toolbar-title>
       <v-spacer />
       <div class="font-weight-medium">{{getUser.username}}</div>
+      <v-btn icon @click="logout">
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
     </v-app-bar>
     <v-main>
       <navigation-component v-if="userLoggedIn" />
@@ -35,6 +38,11 @@ export default {
   created() {
     this.$store.dispatch('configuration/loadUserFromStorage');
     this.$store.dispatch('db/refreshDbs');
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('configuration/logout');
+    }
   },
 };
 </script>
