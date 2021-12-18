@@ -1,6 +1,7 @@
 <template>
   <v-dialog :value="value" max-width="40vw" @close="close" @click:outside="close">
-    <v-card  :loading="loading">
+    <slot v-if="custom"></slot>
+    <v-card v-else :loading="loading">
       <v-card-title>{{title}}</v-card-title>
       <v-card-text>
         <slot v-if="!loading"></slot>
@@ -23,7 +24,10 @@ export default {
     },
     title: {
       type: String,
-      required: true,
+    },
+    custom: {
+      type: Boolean,
+      default: false,
     }
   },
   methods: {

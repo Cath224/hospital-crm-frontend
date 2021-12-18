@@ -46,13 +46,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (store.getters["configuration/getCurrentUser"] == null) {
+    if (store.getters["configuration/getSelectedDoctor"] == null) {
       next({ name: "Login", query: { page: to.name } });
     } else {
       next();
     }
   } else if (to.name === "Login") {
-    if (store.getters["configuration/getCurrentUser"] == null) {
+    if (store.getters["configuration/getSelectedDoctor"] == null) {
       next();
     } else {
       let page = to.query.page;

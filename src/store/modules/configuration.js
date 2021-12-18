@@ -1,45 +1,31 @@
 import LocalStorage from "../localStorage";
 
 const state = {
-  user: null,
-  selectedDb: null,
+  selectedDoctor: null,
 };
 
 const getters = {
-  getCurrentUser: (state) => {
-    let user = state.user;
-    if (!user) {
-      user = LocalStorage.getItem("user");
+  getSelectedDoctor: (state) => {
+    let doctor = state.selectedDoctor;
+    if (!doctor) {
+      doctor = LocalStorage.getItem("doctor");
     }
-    return user;
-  },
-  getSelectedDb: (state) => {
-    return state.selectedDb;
+    return doctor;
   },
 };
 
 const actions = {
-  selectDb({ commit }, value) {
-    commit("setSelectedDb", value);
+  selectDoctor({ commit }, value) {
+    commit("setDoctor", LocalStorage.saveItem("doctor", value));
   },
-  selectUser({ commit }, value) {
-    commit("setUser", LocalStorage.saveItem("user", value));
-  },
-  loadUserFromStorage({ commit }) {
-    commit("setUser", LocalStorage.getItem("user"));
-  },
-  logout({ commit }) {
-    LocalStorage.deleteItem("user");
-    commit("setUser", null);
+  loadDoctorFromStorage({ commit }) {
+    commit("setDoctor", LocalStorage.getItem("doctor"));
   },
 };
 
 const mutations = {
-  setSelectedDb(state, payload) {
-    state.selectedDb = payload;
-  },
-  setUser(state, payload) {
-    state.user = payload;
+  setDoctor(state, payload) {
+    state.selectedDoctor = payload;
   },
 };
 

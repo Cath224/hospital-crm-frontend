@@ -6,12 +6,12 @@
     <v-card-text>
       <div class="d-flex flex-column col-auto">
         <div>
-          <v-text-field v-model="username" label="Username" clearable/>
-          <v-text-field v-model="password" type="password" label="Password" clearable/>
+          <entity-autocomplete-field v-model="doctor" items-repository-name="DOCTOR"
+                                     :item-text-function="(value) => `${value.firstName} ${value.lastName}`"
+                                     object-return/>
         </div>
         <div class="d-flex flex-row align-center justify-end">
-          <v-btn class="mx-2" color="primary" text @click="signUp">Sign up</v-btn>
-          <v-btn color="primary" @click="signIn">Sign in</v-btn>
+          <v-btn class="mx-2" color="primary" @click="selectDoctor">Select</v-btn>
         </div>
       </div>
     </v-card-text>
@@ -20,21 +20,20 @@
 
 <script>
 
+import EntityAutocompleteField from "../common/EntityAutocompleteField";
+
 export default {
   name: "UserLoginPageComponent",
+  components: {EntityAutocompleteField},
   data: () => ({
-    username: null,
-    password: null,
+    doctor: null,
   }),
   methods: {
-    signUp() {
-      this.$store.dispatch('configuration/selectUser', {
-        username: this.username,
-        password: this.password,
+    selectDoctor() {
+      this.$store.dispatch('configuration/selectDoctor', this.doctor)
+      .then(() => {
+        this.$router.push({name: "Home"})
       })
-    },
-    signIn() {
-      this.signUp();
     },
   }
 }
