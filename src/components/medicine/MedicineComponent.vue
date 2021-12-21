@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-row fill-height flex-grow-1">
     <div class="d-flex flex-column fill-height flex-grow-1">
-      <div class="text-h4 my-2 mx-4">Patients</div>
+      <div class="text-h4 my-2 mx-4">Medications</div>
       <v-data-table class="ma-4 pa-4" height="60vh" :headers="headers" :items="items" :loading="loading"
                     :search="search">
         <template v-slot:top>
@@ -16,6 +16,9 @@
               />
             </v-col>
           </v-row>
+        </template>
+        <template v-slot:item.branchId="{ item }">
+          <entity-table-field entity-store="branches" :entity-id-value="item.branchId"/>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-icon
@@ -35,7 +38,7 @@
       </v-data-table>
     </div>
     <entity-dialog v-model="patientDialog" custom @close="cancelCreationPatient">
-      <patient-form-component v-if="patientDialog" :type="patientToChange != null ? 'edit' : 'create'"
+      <medicine-form-component v-if="patientDialog" :type="patientToChange != null ? 'edit' : 'create'"
                               :input-entity="patientToChange"
                               @entityChanged="patientChanged"
                               @cancelCreation="cancelCreationPatient"/>
@@ -47,43 +50,56 @@
 import {RepositoryFactory} from "../../utils/RepositoryFactory";
 import EventBus from "../../plugins/event-bus";
 import EntityDialog from "../common/EntityDialog";
-import PatientFormComponent from "./PatientFormComponent";
+import MedicineFormComponent from "./MedicineFormComponent";
+import EntityTableField from "../common/EntityTableField";
 
 export default {
-  name: "PatientsComponent",
-  components: {PatientFormComponent, EntityDialog},
+  name: "MedicineComponent",
+  components: {EntityTableField, MedicineFormComponent, EntityDialog},
   data: () => ({
     search: null,
     headers: [
       {
-        text: 'First Name',
+        text: 'Name',
         align: 'start',
         sortable: true,
-        value: 'firstName',
+        value: 'name',
       },
       {
-        text: 'Last Name',
+        text: 'Serial Number',
         align: 'start',
         sortable: true,
-        value: 'lastName',
+        value: 'serialNumber',
       },
       {
-        text: 'Sex',
+        text: 'Branch',
         align: 'start',
         sortable: true,
-        value: 'sex',
+        value: 'branchId',
       },
       {
-        text: 'Birthday',
+        text: 'Description',
         align: 'start',
         sortable: true,
-        value: 'birthday',
+        value: 'description',
       },
       {
-        text: 'Phone',
+        text: 'Indications',
         align: 'start',
         sortable: true,
-        value: 'phone',
+        value: 'indications',
+      },
+      {
+        text: 'Contraindications',
+        align: 'start',
+        sortable: true,
+        value: 'contraindications',
+      },
+      {
+        text: 'Number',
+        align: 'start',
+        sortable: true,
+        value: 'number',
       },
       {text: 'Actions', value: 'actions', sortable: false},
     ],
@@ -98,7 +114,7 @@ export default {
   methods: {
     loadItems() {
       this.loading = true;
-      RepositoryFactory.get("PATIENT").get(null).then((response) => {
+      RepositoryFactory.get("MEDICINE").get(null).then((response) => {
         this.items = response.data
       }).catch((error) => {
         EventBus.$emit("error", error);
@@ -118,7 +134,7 @@ export default {
       this.patientDialog = false;
     },
     deleteItem(id){
-      RepositoryFactory.get("PATIENT").deleteById(id).then(() => {
+      RepositoryFactory.get("MEDICINE").deleteById(id).then(() => {
         this.loadItems();
       }).catch((error) => {
         EventBus.$emit("error", error);

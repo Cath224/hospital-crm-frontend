@@ -7,6 +7,7 @@
       <div class="d-flex flex-column col-auto">
         <div>
           <entity-autocomplete-field v-model="doctor" items-repository-name="DOCTOR"
+                                     label="Doctor"
                                      :item-text-function="(value) => `${value.firstName} ${value.lastName}`"
                                      object-return/>
         </div>

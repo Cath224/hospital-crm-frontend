@@ -1,49 +1,37 @@
 <template>
-  <v-card :loading="loading">
-    <v-card-title>{{type === 'create' ? 'Create' : 'Edit'}} Patient</v-card-title>
+  <v-card :loading="loading" >
+    <v-card-title>{{type === 'create' ? 'Create' : 'Edit'}} Medication</v-card-title>
     <v-card-text>
       <v-form v-if="!!entity">
         <v-row align="center">
           <v-col align-self="center" cols="5">
-            <v-text-field v-model="entity.firstName" label="First Name"/>
+            <v-text-field v-model="entity.name" label="Name"/>
           </v-col>
           <v-col align-self="center" cols="5">
-            <v-text-field v-model="entity.lastName" label="Last Name"/>
-          </v-col>
-        </v-row>
-        <v-row align="center">
-          <v-col align-self="center" cols="5">
-            <v-menu
-                v-model="birthdayMenu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                    v-model="entity.birthday"
-                    label="Birthday"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                />
-              </template>
-              <v-date-picker
-                  v-model="entity.birthday"
-                  @input="birthdayMenu = false"
-              />
-            </v-menu>
-          </v-col>
-          <v-col align-self="center" cols="5">
-            <v-text-field v-model="entity.phone" type="number" label="Phone"/>
+            <v-text-field v-model="entity.number" type="number" label="Number"/>
           </v-col>
         </v-row>
         <v-row align="center">
           <v-col align-self="center" cols="5">
-            <v-select v-model="entity.sex" label="Sex" :items="['M', 'F']"/>
+            <v-text-field v-model="entity.serialNumber" label="Serial Number"/>
+          </v-col>
+          <v-col align-self="center" cols="5">
+            <entity-autocomplete-field v-model="entity.branchId" items-store-name="branches" label="Branch" item-text="name"/>
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col align-self="center" cols="10">
+              <v-textarea v-model="entity.description" label="Description" />
+            </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col align-self="center" cols="10">
+              <v-textarea v-model="entity.indications" label="Indications" />
+            </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-col align-self="center" cols="10">
+            <v-textarea v-model="entity.contraindications" label="Contraindications" />
           </v-col>
         </v-row>
       </v-form>
@@ -58,12 +46,14 @@
 </template>
 
 <script>
-import * as deepcopy from 'deepcopy';
+import * as deepcopy from "deepcopy";
 import {RepositoryFactory} from "../../utils/RepositoryFactory";
 import EventBus from "../../plugins/event-bus";
+import EntityAutocompleteField from "../common/EntityAutocompleteField";
 
 export default {
-  name: "PatientFormComponent",
+  name: "MedicineFormComponent",
+  components: {EntityAutocompleteField},
   props: {
     type: {
       type: String,
@@ -85,7 +75,7 @@ export default {
     changePatient() {
       this.loading = true;
       if (this.type === 'create') {
-        RepositoryFactory.get("PATIENT").create(this.entity).then((response) => {
+        RepositoryFactory.get("MEDICINE").create(this.entity).then((response) => {
           this.$emit("entityChanged", response.data);
           this.cancelCreatePatient();
         }).catch((error) => {
@@ -94,7 +84,7 @@ export default {
           this.loading = false
         })
       } else {
-        RepositoryFactory.get("PATIENT").update(this.entity, this.entity.id).then((response) => {
+        RepositoryFactory.get("MEDICINE").update(this.entity, this.entity.id).then((response) => {
           this.$emit("entityChanged", response.data);
           this.cancelCreatePatient();
         }).catch((error) => {

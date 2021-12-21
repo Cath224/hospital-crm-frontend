@@ -5,12 +5,12 @@
         <v-icon large>mdi-hospital-marker</v-icon>
         <div>Hospital CRM</div>
       </v-toolbar-title>
-      <v-spacer />
-      <div class="font-weight-medium">{{`${getSelectedDoctor.firstName} ${getSelectedDoctor.lastName}`}}</div>
+      <v-spacer/>
+      <doctor-menu-component/>
     </v-app-bar>
     <v-main>
-      <navigation-component v-if="doctorSelected" />
-      <v-container fluid  class="fill-height">
+      <navigation-component v-if="doctorSelected"/>
+      <v-container fluid class="fill-height">
         <router-view/>
       </v-container>
       <v-snackbar
@@ -19,7 +19,7 @@
           multi-line
           timeout="1000"
       >
-        {{errorMessage}}
+        {{ errorMessage }}
         <template v-slot:action="{ attrs }">
           <v-btn
               color="blue"
@@ -40,9 +40,11 @@
 import NavigationComponent from "./components/NavigationComponent";
 import {mapGetters} from "vuex";
 import EventBus from "./plugins/event-bus";
+import DoctorMenuComponent from "./components/user/DoctorMenuComponent";
+
 export default {
   name: "App",
-  components: {NavigationComponent},
+  components: {DoctorMenuComponent, NavigationComponent},
   data: () => ({
     errorBar: false,
     errorMessage: null,
@@ -61,6 +63,8 @@ export default {
       this.errorMessage = error;
       this.errorBar = true;
     });
+    this.$store.dispatch("content/refreshBranches");
+    this.$store.dispatch("content/refreshOffices");
   },
 };
 </script>

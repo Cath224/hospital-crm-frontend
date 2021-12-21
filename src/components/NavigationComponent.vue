@@ -38,6 +38,16 @@ export default {
         icon: 'mdi-account-group',
         route: 'Patients',
       },
+      {
+        name: 'Doctors',
+        icon: 'mdi-doctor',
+        route: 'Doctors',
+      },
+      {
+        name: 'Medications',
+        icon: 'mdi-pill',
+        route: 'Medications',
+      },
     ],
   }),
 

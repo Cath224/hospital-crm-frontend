@@ -16,4 +16,12 @@ export class CommonRepository {
     }
     return restClient.get(fullPath);
   }
+
+  deleteByFilter(filter) {
+    let fullPath = this.path;
+    if (filter != null) {
+      fullPath += `?filter=${filter}`;
+    }
+    return restClient.delete(fullPath);
+  }
 }
