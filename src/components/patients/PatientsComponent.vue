@@ -27,9 +27,16 @@
           </v-icon>
           <v-icon
               small
+              class="mr-2"
               @click="deleteItem(item.id)"
           >
             mdi-delete
+          </v-icon>
+          <v-icon
+              small
+              @click="showDiagnoses(item.id)"
+          >
+            mdi-order-bool-ascending
           </v-icon>
         </template>
       </v-data-table>
@@ -40,6 +47,9 @@
                               @entityChanged="patientChanged"
                               @cancelCreation="cancelCreationPatient"/>
     </entity-dialog>
+    <entity-dialog v-model="diagnosesDialog" custom @close="closeDiagnoses">
+      <patient-diagnosis-component v-if="!!diagnosesDialog && !!diagnosesPatientId" :patient-id="diagnosesPatientId" @closeDiagnosis="closeDiagnoses" />
+    </entity-dialog>
   </div>
 </template>
 
@@ -48,10 +58,11 @@ import {RepositoryFactory} from "../../utils/RepositoryFactory";
 import EventBus from "../../plugins/event-bus";
 import EntityDialog from "../common/EntityDialog";
 import PatientFormComponent from "./PatientFormComponent";
+import PatientDiagnosisComponent from "./PatientDiagnosisComponent";
 
 export default {
   name: "PatientsComponent",
-  components: {PatientFormComponent, EntityDialog},
+  components: {PatientDiagnosisComponent, PatientFormComponent, EntityDialog},
   data: () => ({
     search: null,
     headers: [
@@ -90,6 +101,8 @@ export default {
     items: [],
     loading: false,
     patientDialog: false,
+    diagnosesDialog: false,
+    diagnosesPatientId: null,
     patientToChange: null,
   }),
   mounted() {
@@ -123,6 +136,14 @@ export default {
       }).catch((error) => {
         EventBus.$emit("error", error);
       })
+    },
+    showDiagnoses(id) {
+      this.diagnosesDialog = true;
+      this.diagnosesPatientId = id;
+    },
+    closeDiagnoses() {
+      this.diagnosesDialog = false;
+      this.diagnosesPatientId = null;
     },
   },
 }

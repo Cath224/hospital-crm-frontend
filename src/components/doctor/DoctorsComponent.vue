@@ -23,7 +23,17 @@
         <template v-slot:item.branches="{ item }">
           <div v-if="getDoctorBranches(item.id)" class="d-flex flex-column">
             <div v-for="branch of getDoctorBranches(item.id)" :key="branch.id">
-              {{ `${branch.name} - ${branch.experience}`}}
+              <v-tooltip left color="primary">
+                <template v-slot:activator="{ on }">
+                 <div v-on="on">
+                   {{ branch.name }}
+                 </div>
+                </template>
+                <div class="d-flex flex-column col-auto align-self-auto">
+                  <p>Years of Experience: {{branch.experience}}</p>
+                  <p>Number of patients: {{branch.numberOfPatients}}</p>
+                </div>
+              </v-tooltip>
             </div>
           </div>
         </template>
@@ -37,9 +47,16 @@
           </v-icon>
           <v-icon
               small
+              class="mr-2"
               @click="deleteItem(item.id)"
           >
             mdi-delete
+          </v-icon>
+          <v-icon
+              small
+              @click="openCalendar(item.id)"
+          >
+            mdi-calendar
           </v-icon>
         </template>
       </v-data-table>
@@ -49,6 +66,9 @@
                              :input-entity="patientToChange"
                              @entityChanged="patientChanged"
                              @cancelCreation="cancelCreationPatient"/>
+    </entity-dialog>
+    <entity-dialog v-model="calendarDialog" custom @close="closeCalendar">
+      <doctor-calendar-component v-if="calendarDialog" :doctorId="calendarDoctorId" @closeCalendar="closeCalendar" />
     </entity-dialog>
   </div>
 </template>
@@ -60,10 +80,11 @@ import DoctorFormComponent from "./DoctorFormComponent";
 import EntityDialog from "../common/EntityDialog";
 import EntityTableField from "../common/EntityTableField";
 import {mapGetters} from "vuex";
+import DoctorCalendarComponent from "./DoctorCalendarComponent";
 
 export default {
   name: "DoctorsComponent",
-  components: {EntityTableField, DoctorFormComponent, EntityDialog},
+  components: {DoctorCalendarComponent, EntityTableField, DoctorFormComponent, EntityDialog},
   data: () => ({
     search: null,
     headers: [
@@ -114,6 +135,8 @@ export default {
     items: [],
     loading: false,
     patientDialog: false,
+    calendarDialog: false,
+    calendarDoctorId: null,
     patientToChange: null,
     branchesExp: {},
   }),
@@ -157,6 +180,7 @@ export default {
               let branchExp = {
                 id: branch.id,
                 name: branch.name,
+                numberOfPatients: experience.numberOfPatients,
               };
               if (experience.startPracticingDate) {
                 let year = date - new Date(experience.startPracticingDate).getFullYear();
@@ -194,6 +218,13 @@ export default {
         EventBus.$emit("error", error);
       })
     },
+    openCalendar(doctorId) {
+      this.calendarDoctorId = doctorId;
+      this.calendarDialog = true;
+    },
+    closeCalendar() {
+      this.calendarDialog = false;
+    }
   },
 }
 </script>
